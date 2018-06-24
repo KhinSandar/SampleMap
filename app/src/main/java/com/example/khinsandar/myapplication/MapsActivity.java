@@ -15,12 +15,17 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -45,6 +50,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     ArrayList<LatLng> markerPoints;
+    private LatLng currentLatLng;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,14 +326,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
     /*private void getRoute(Routing.TravelMode travelMode, LatLng toRoute) {
         Routing routing = new Routing.Builder()
                 .travelMode(travelMode)
                 .withListener(new RoutingListener() {
                     @Override
                     public void onRoutingFailure(RouteException e) {
-                        showLoading(false);
-                        Toast.makeText(getActivity(), "This routing is not available.", Toast.LENGTH_LONG).show();
+                        //showLoading(false);
+                        Toast.makeText(getApplicationContext(), "This routing is not available.", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -336,14 +344,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     @Override
                     public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
-                        showLoading(false);
+                        //showLoading(false);
                         mMap.clear();
                         gotoCurrentLocation();
                         for(Building building: buildings) {
                             mMap.addMarker(new MarkerOptions()
                                     .position(new LatLng(building.getLat(), building.getLng()))
-                                    .icon(bitmapDescriptorFromVector(getActivity(),
-                                            getMaker(building.getType())))).setTag(building);
+                                    .icon(bitmapDescriptorFromVector(getActivity(), getMaker(building.getType())))).setTag(building);
                         }
                         if(slidingPanel.getPanelState() != SlidingUpPanelLayout.PanelState.COLLAPSED) {
                             recyclerView.smoothScrollToPosition(0);
@@ -373,8 +380,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .waypoints(currentLatLng, toRoute)
                 .build();
         routing.execute();
-    }
-*/
+    }*/
+
+
+    /*private void gotoCurrentLocation() {
+        MarkerOptions options = new MarkerOptions();
+        options.icon(bitmapDescriptorFromVector(getActivity(), R.drawable.ic_nearby_maps_maker));
+        options.position(currentLatLng);
+        mMap.addMarker(options);
+
+        CameraPosition cameraPosition = CameraPosition.builder()
+                .target(currentLatLng)
+                .zoom(15)
+                .build();
+
+        // Animate the change in camera view over 2 seconds
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),100, null);
+    }*/
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
