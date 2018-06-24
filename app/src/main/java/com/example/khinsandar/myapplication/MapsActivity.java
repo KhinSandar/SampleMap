@@ -1,12 +1,17 @@
 package com.example.khinsandar.myapplication;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,9 +19,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -310,6 +317,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // Drawing polyline in the Google Map for the i-th route
             mMap.addPolyline(lineOptions);
         }
+    }
+
+    /*private void getRoute(Routing.TravelMode travelMode, LatLng toRoute) {
+        Routing routing = new Routing.Builder()
+                .travelMode(travelMode)
+                .withListener(new RoutingListener() {
+                    @Override
+                    public void onRoutingFailure(RouteException e) {
+                        showLoading(false);
+                        Toast.makeText(getActivity(), "This routing is not available.", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onRoutingStart() {
+
+                    }
+
+                    @Override
+                    public void onRoutingSuccess(ArrayList<Route> routes, int shortestRouteIndex) {
+                        showLoading(false);
+                        mMap.clear();
+                        gotoCurrentLocation();
+                        for(Building building: buildings) {
+                            mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(building.getLat(), building.getLng()))
+                                    .icon(bitmapDescriptorFromVector(getActivity(),
+                                            getMaker(building.getType())))).setTag(building);
+                        }
+                        if(slidingPanel.getPanelState() != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                            recyclerView.smoothScrollToPosition(0);
+                            slidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+                        }
+                        mMap.setOnMarkerClickListener(onClickMarker);
+
+                        polylines = new ArrayList<>();
+                        //add route(s) to the map.
+                        double distance = 0.0;
+                        for (int i = 0; i < routes.size(); i++) {
+                            PolylineOptions polyOptions = new PolylineOptions();
+                            polyOptions.color(getResources().getColor(R.color.colorAccent));
+                            polyOptions.width(16);
+                            polyOptions.addAll(routes.get(i).getPoints());
+                            Polyline polyline = mMap.addPolyline(polyOptions);
+                            polylines.add(polyline);
+                            distance += routes.get(i).getDistanceValue();
+                        }
+                    }
+
+                    @Override
+                    public void onRoutingCancelled() {
+
+                    }
+                })
+                .waypoints(currentLatLng, toRoute)
+                .build();
+        routing.execute();
+    }
+*/
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
 }
